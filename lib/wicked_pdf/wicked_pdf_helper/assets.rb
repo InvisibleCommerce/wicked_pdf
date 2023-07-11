@@ -59,28 +59,28 @@ class WickedPdf
       end
 
       def wicked_pdf_stylesheet_pack_tag(*sources)
-        return unless defined?(Webpacker)
+        return unless defined?(Shakapacker)
 
         if running_in_development?
           stylesheet_pack_tag(*sources)
         else
           css_text = sources.collect do |source|
             source = WickedPdfHelper.add_extension(source, 'css')
-            wicked_pdf_stylesheet_link_tag(webpacker_source_url(source))
+            wicked_pdf_stylesheet_link_tag(shakapacker_source_url(source))
           end.join("\n")
           css_text.respond_to?(:html_safe) ? css_text.html_safe : css_text
         end
       end
 
       def wicked_pdf_javascript_pack_tag(*sources)
-        return unless defined?(Webpacker)
+        return unless defined?(Shakapacker)
 
         if running_in_development?
           javascript_pack_tag(*sources)
         else
           sources.collect do |source|
             source = WickedPdfHelper.add_extension(source, 'js')
-            "<script type='text/javascript'>#{read_asset(webpacker_source_url(source))}</script>"
+            "<script type='text/javascript'>#{read_asset(shakapacker_source_url(source))}</script>"
           end.join("\n").html_safe
         end
       end
@@ -110,12 +110,12 @@ class WickedPdf
       end
 
       def wicked_pdf_asset_pack_path(asset)
-        return unless defined?(Webpacker)
+        return unless defined?(Shakapacker)
 
         if running_in_development?
           asset_pack_path(asset)
         else
-          wicked_pdf_asset_path webpacker_source_url(asset)
+          wicked_pdf_asset_path shakapacker_source_url(asset)
         end
       end
 
@@ -202,11 +202,11 @@ class WickedPdf
         nil
       end
 
-      def webpacker_source_url(source)
-        return unless webpacker_version
+      def shakapacker_source_url(source)
+        return unless shakapacker_version
 
         # In Webpacker 3.2.0 asset_pack_url is introduced
-        if webpacker_version >= '3.2.0'
+        if shakapacker_version >= '3.2.0'
           if (host = Rails.application.config.asset_host)
             asset_pack_path(source, :host => host)
           else
@@ -220,23 +220,23 @@ class WickedPdf
       end
 
       def running_in_development?
-        return unless webpacker_version
+        return unless shakapacker_version
 
         # :dev_server method was added in webpacker 3.0.0
-        if Webpacker.respond_to?(:dev_server)
-          Webpacker.dev_server.running?
+        if Shakapacker.respond_to?(:dev_server)
+          Shakapacker.dev_server.running?
         else
           Rails.env.development? || Rails.env.test?
         end
       end
 
-      def webpacker_version
-        return unless defined?(Webpacker)
+      def shakapacker_version
+        return unless defined?(Shakapacker)
 
         # If webpacker is used, need to check for version
-        require 'webpacker/version'
+        require 'shakapacker/version'
 
-        Webpacker::VERSION
+        Shakapacker::VERSION
       end
     end
   end
